@@ -56,7 +56,12 @@ function listarAgendamentos() {
       lista.innerHTML = "";
       dados.forEach((a) => {
         lista.innerHTML += `
-          <li>${a.nome} - ${a.data} às ${a.horario}</li>
+         <li>
+            <strong>Nome:</strong> ${a.nome}<br>
+            <strong>Data:</strong> ${a.data}<br>
+            <strong>Horário:</strong> ${a.horario}<br>
+            <strong>Descrição:</strong> ${a.descricao}
+          </li>
         `;
       });
     });
