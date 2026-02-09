@@ -55,10 +55,13 @@ function listarAgendamentos() {
       const lista = document.getElementById("lista");
       lista.innerHTML = "";
       dados.forEach((a) => {
+        const partes = a.data.split("T")[0].split("-");
+        const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+
         lista.innerHTML += `
          <li>
             <strong>Nome:</strong> ${a.nome}<br>
-            <strong>Data:</strong> ${a.data}<br>
+            <strong>Data:</strong> ${dataFormatada}<br>
             <strong>Horário:</strong> ${a.horario}<br>
             <strong>Descrição:</strong> ${a.descricao}
           </li>
