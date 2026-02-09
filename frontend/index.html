@@ -1,22 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <title>AgendaWeb - Login</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
+
   <body>
-    <div class="container">
+    <!-- LOGIN -->
+    <div class="container" id="login-area">
       <h1>AgendaWeb</h1>
 
       <form id="loginForm">
         <input type="email" id="email" placeholder="E-mail" required />
         <input type="password" id="senha" placeholder="Senha" required />
-
         <button type="submit">Entrar</button>
       </form>
 
       <p class="info">Sistema de agendamentos</p>
+    </div>
+
+    <!-- AGENDAMENTO -->
+    <div class="container" id="agendamento-area" style="display: none">
+      <h2>Novo Agendamento</h2>
+
+      <input type="text" id="nome" placeholder="Nome" />
+      <input type="date" id="data" />
+      <input type="time" id="horario" />
+      <input type="text" id="descricao" placeholder="Descrição" />
+
+      <button onclick="criarAgendamento()">Salvar</button>
+
+      <h3>Agendamentos</h3>
+      <ul id="lista"></ul>
     </div>
 
     <script src="js/script.js"></script>
