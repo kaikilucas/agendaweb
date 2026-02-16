@@ -4,6 +4,8 @@ const db = require("../config/db");
 
 // Criar agendamento
 router.post("/", (req, res) => {
+  const { nome, data, horario, descricao, usuario_id } = req.body;
+
   const verificarSql = `
   SELECT * FROM agendamentos
   WHERE data = ? AND horario = ?
@@ -20,26 +22,14 @@ router.post("/", (req, res) => {
 
     // Se não existir, insere
     const sql = `
-    INSERT INTO agendamentos (nome, data, horario, descricao)
-    VALUES (?, ?, ?, ?)
-  `;
-
-    db.query(sql, [nome, data, horario, descricao], (err) => {
-      if (err) return res.status(500).json(err);
-
-      res.json({ message: "Agendamento criado com sucesso!" });
-    });
-  });
-  const { nome, data, horario, descricao, usuario_id } = req.body;
-
-  const sql = `
     INSERT INTO agendamentos (nome, data, horario, descricao, usuario_id)
     VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.query(sql, [nome, data, horario, descricao, usuario_id], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Agendamento criado com sucesso!" });
+    db.query(sql, [nome, data, horario, descricao, usuario_id], (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Agendamento criado com sucesso!" });
+    });
   });
 });
 
