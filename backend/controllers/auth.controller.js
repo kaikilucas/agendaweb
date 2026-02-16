@@ -28,6 +28,13 @@ exports.login = (req, res) => {
       return res.status(401).json({ message: "Senha inválida" });
     }
 
-    res.json({ message: "Login realizado com sucesso" });
+    res.json({
+      message: "Login realizado com sucesso",
+      usuario: {
+        id: user.id,
+        nome: user.nome,
+        email: user.email,
+      },
+    });
   });
 };

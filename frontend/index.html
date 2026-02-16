@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <title>AgendaWeb - Login</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
   </head>
 
   <body>
@@ -25,16 +29,29 @@
       <h2>Novo Agendamento</h2>
 
       <input type="text" id="nome" placeholder="Nome" />
-      <input type="date" id="data" />
-      <input type="time" id="horario" />
-      <input type="text" id="descricao" placeholder="Descrição" />
+
+      <input type="text" id="data" placeholder="Selecione a data" />
+
+      <select id="horario">
+        <option value="">Selecione o horário</option>
+      </select>
+
+      <select id="descricao">
+        <option value="">Selecione o serviço</option>
+        <option value="SOBRANCELHA">SOBRANCELHA</option>
+        <option value="VOLUME RUSSO">VOLUME RUSSO</option>
+        <option value="VOLUME BRASILEIRO">VOLUME BRASILEIRO</option>
+        <option value="VOLUME BRASILEIRO">REMOÇÃO</option>
+        <option value="VOLUME BRASILEIRO">MANUTENÇÃO</option>
+      </select>
 
       <button onclick="criarAgendamento()">Salvar</button>
-
+      <button onclick="logout()">Sair</button>
       <h3>Agendamentos</h3>
       <ul id="lista"></ul>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
     <script src="js/script.js"></script>
   </body>
 </html>
