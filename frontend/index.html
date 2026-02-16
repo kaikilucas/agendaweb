@@ -30,7 +30,7 @@
 
       <input type="text" id="nome" placeholder="Nome" />
 
-      <input type="text" id="data" placeholder="Selecione a data" />
+      <input type="text" id="data" placeholder="Selecione a data" readonly />
 
       <select id="horario">
         <option value="">Selecione o horário</option>
@@ -45,7 +45,7 @@
         <option value="VOLUME BRASILEIRO">MANUTENÇÃO</option>
       </select>
 
-      <button type="button" onclick="criarAgendamento()">Salvar</button>
+      <button onclick="criarAgendamento()">Salvar</button>
       <button onclick="logout()">Sair</button>
       <h3>Agendamentos</h3>
       <ul id="lista"></ul>

@@ -1,3 +1,4 @@
+let calendario;
 document
   .getElementById("loginForm")
   .addEventListener("submit", async function (e) {
@@ -30,57 +31,83 @@ document
     }
   });
 
-function criarAgendamento() {
-  fetch("http://localhost:3000/api/agendamentos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      nome: document.getElementById("nome").value,
-      data: document.getElementById("data").value,
+async function criarAgendamento() {
+  const nome = document.getElementById("nome").value;
+  const dataSelecionada = document.getElementById("data").value;
+  const horario = document.getElementById("horario").value;
+  const descricao = document.getElementById("descricao").value;
+  const usuario_id = localStorage.getItem("usuarioId");
 
-      horario: document.getElementById("horario").value,
-      descricao: document.getElementById("descricao").value,
-      usuario_id: localStorage.getItem("usuarioId"),
-    }),
-  })
-    .then((res) => res.json())
-    .then(() => {
-      alert("Agendamento criado com sucesso!");
-      listarAgendamentos();
+  if (!nome || !dataSelecionada || !horario || !descricao) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:3000/api/agendamentos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome,
+        data: dataSelecionada,
+        horario,
+        descricao,
+        usuario_id,
+      }),
     });
-}
 
-function listarAgendamentos() {
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    alert("Agendamento criado com sucesso!");
+
+    await listarAgendamentos();
+    await carregarHorarios(dataSelecionada);
+    await atualizarDatasLotadas();
+
+    document.getElementById("horario").value = "";
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao criar agendamento.");
+  }
+}
+async function listarAgendamentos() {
   const usuarioId = localStorage.getItem("usuarioId");
 
-  fetch(`http://localhost:3000/api/agendamentos?usuario_id=${usuarioId}`)
-    .then((res) => res.json())
-    .then((dados) => {
-      const lista = document.getElementById("lista");
-      lista.innerHTML = "";
+  const response = await fetch(
+    `http://localhost:3000/api/agendamentos?usuario_id=${usuarioId}`,
+  );
 
-      dados.forEach((a) => {
-        const partes = a.data.split("T")[0].split("-");
-        const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+  const dados = await response.json();
 
-        lista.innerHTML += `
-          <li>
-            <strong>Nome:</strong> ${a.nome}<br>
-            <strong>Data:</strong> ${dataFormatada}<br>
-            <strong>Horário:</strong> ${a.horario}<br>
-            <strong>Descrição:</strong> ${a.descricao}<br><br>
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
 
-            <button onclick='editarAgendamento(${a.id}, "${a.nome}", "${a.data}", "${a.horario}", "${a.descricao}")'>
-              Editar
-            </button>
+  dados.forEach((a) => {
+    const partes = a.data.split("T")[0].split("-");
+    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
 
-            <button onclick="excluirAgendamento(${a.id})">
-              Excluir
-            </button>
-          </li>
-        `;
-      });
-    });
+    lista.innerHTML += `
+      <li>
+        <strong>Nome:</strong> ${a.nome}<br>
+        <strong>Data:</strong> ${dataFormatada}<br>
+        <strong>Horário:</strong> ${a.horario.substring(0, 5)}<br>
+        <strong>Descrição:</strong> ${a.descricao}<br><br>
+
+        <button onclick='editarAgendamento(${a.id}, "${a.nome}", "${a.data}", "${a.horario}", "${a.descricao}")'>
+          Editar
+        </button>
+
+        <button onclick="excluirAgendamento(${a.id})">
+          Excluir
+        </button>
+      </li>
+    `;
+  });
 }
 
 function excluirAgendamento(id) {
@@ -90,7 +117,17 @@ function excluirAgendamento(id) {
     .then((res) => res.json())
     .then(() => {
       alert("Agendamento excluído!");
+
       listarAgendamentos();
+
+      // 🔥 Atualiza calendário
+      atualizarDatasLotadas();
+
+      // 🔥 Atualiza horários da data atual (se houver uma selecionada)
+      const dataSelecionada = document.getElementById("data").value;
+      if (dataSelecionada) {
+        carregarHorarios(dataSelecionada);
+      }
     });
 }
 
@@ -132,70 +169,115 @@ function logout() {
 
   alert("Você saiu do sistema.");
 }
-function gerarDatasDisponiveis() {
-  const selectData = document.getElementById("data");
-  selectData.innerHTML = '<option value="">Selecione a data</option>';
 
-  const hoje = new Date();
-  const limite = new Date();
-  limite.setDate(hoje.getDate() + 60);
-
-  for (let d = new Date(hoje); d <= limite; d.setDate(d.getDate() + 1)) {
-    const diaSemana = d.getDay(); // 0 = domingo, 1 = segunda
-
-    if (diaSemana !== 0 && diaSemana !== 1) {
-      const dataFormatada = d.toISOString().split("T")[0];
-
-      const option = document.createElement("option");
-      option.value = dataFormatada;
-      option.textContent = dataFormatada;
-
-      selectData.appendChild(option);
-    }
-  }
-}
-window.onload = function () {
-  gerarDatasDisponiveis();
-};
-
-function gerarHorariosDisponiveis(dataSelecionada) {
-  const selectHorario = document.getElementById("horario");
-  selectHorario.innerHTML = '<option value="">Selecione o horário</option>';
-
-  const horarios = ["07:00", "09:00", "11:00", "14:00", "16:00"];
-
-  const data = new Date(dataSelecionada);
-  const diaSemana = data.getDay(); // 6 = sábado
-
-  let horariosPermitidos = horarios;
-
-  if (diaSemana === 6) {
-    horariosPermitidos = ["07:00", "09:00", "11:00"];
-  }
-
-  horariosPermitidos.forEach((h) => {
-    const option = document.createElement("option");
-    option.value = h;
-    option.textContent = h;
-    selectHorario.appendChild(option);
-  });
-}
-document.getElementById("data").addEventListener("change", function () {
-  gerarHorariosDisponiveis(this.value);
-});
-window.addEventListener("load", function () {
-  flatpickr("#data", {
+window.addEventListener("load", async function () {
+  calendario = flatpickr("#data", {
     locale: flatpickr.l10ns.pt,
-    dateFormat: "Y/m/d", // formato que aparece
-    altInput: true, // cria campo visual separado
-    altFormat: "d/m/Y", // formato visual
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "d-m-Y",
     minDate: "today",
     maxDate: new Date().fp_incr(60),
-
     disable: [
       function (date) {
         return date.getDay() === 0 || date.getDay() === 1;
       },
     ],
+    onChange: function (selectedDates, dateStr) {
+      carregarHorarios(dateStr);
+    },
   });
+
+  await atualizarDatasLotadas();
 });
+
+async function atualizarDatasLotadas() {
+  const resposta = await fetch(
+    "http://localhost:3000/api/agendamentos/datas-lotadas",
+  );
+
+  const datasLotadas = await resposta.json();
+
+  calendario.set("disable", [
+    function (date) {
+      const diaSemana = date.getDay();
+      if (diaSemana === 0 || diaSemana === 1) return true;
+
+      const dataFormatada = date.toISOString().split("T")[0];
+      return datasLotadas.includes(dataFormatada);
+    },
+  ]);
+
+  calendario.redraw();
+}
+
+async function carregarHorarios(dataSelecionada) {
+  const resposta = await fetch(
+    `http://localhost:3000/api/agendamentos/ocupados/${dataSelecionada}`,
+  );
+
+  const horariosOcupados = await resposta.json();
+
+  const select = document.getElementById("horario");
+  select.innerHTML = '<option value="">Selecione o horário</option>';
+
+  const data = new Date(dataSelecionada + "T00:00:00");
+  const diaSemana = data.getDay(); // 6 = sábado
+
+  let listaHorarios;
+
+  if (diaSemana === 6) {
+    // 🔥 SÁBADO
+    listaHorarios = ["07:00", "09:00", "11:00"];
+  } else {
+    // 🔥 TERÇA A SEXTA
+    listaHorarios = ["07:00", "09:00", "11:00", "14:00", "16:00"];
+  }
+
+  listaHorarios.forEach((hora) => {
+    const option = document.createElement("option");
+    option.value = hora;
+    option.textContent = hora;
+
+    const ocupado = horariosOcupados.some(
+      (item) => item.horario.substring(0, 5) === hora,
+    );
+
+    if (ocupado) {
+      option.disabled = true;
+      option.textContent = hora + " (Ocupado)";
+    }
+
+    select.appendChild(option);
+  });
+}
+async function carregarDatasLotadas() {
+  const resposta = await fetch(
+    "http://localhost:3000/api/agendamentos/datas-lotadas",
+  );
+
+  const datasLotadas = await resposta.json();
+
+  flatpickr("#data", {
+    locale: flatpickr.l10ns.pt,
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "d-m-Y",
+    minDate: "today",
+    maxDate: new Date().fp_incr(60),
+
+    disable: [
+      function (date) {
+        const diaSemana = date.getDay();
+        if (diaSemana === 0 || diaSemana === 1) return true;
+
+        const dataFormatada = date.toISOString().split("T")[0];
+        return datasLotadas.includes(dataFormatada);
+      },
+    ],
+
+    onChange: function (selectedDates, dateStr) {
+      carregarHorarios(dateStr);
+    },
+  });
+}

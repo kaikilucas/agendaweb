@@ -32,7 +32,21 @@ router.post("/", (req, res) => {
     });
   });
 });
+// Buscar horários ocupados por data
+router.get("/ocupados/:data", (req, res) => {
+  const { data } = req.params;
 
+  const sql = `
+    SELECT horario FROM agendamentos
+    WHERE data = ?
+  `;
+
+  db.query(sql, [data], (err, results) => {
+    if (err) return res.status(500).json(err);
+
+    res.json(results);
+  });
+});
 // Listar agendamentos
 router.get("/", (req, res) => {
   const { usuario_id } = req.query;
@@ -71,6 +85,36 @@ router.put("/:id", (req, res) => {
   db.query(sql, [nome, data, horario, descricao, id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Agendamento atualizado com sucesso" });
+  });
+});
+
+// Buscar datas totalmente ocupadas
+router.get("/datas-lotadas", (req, res) => {
+  const sql = `
+    SELECT data, COUNT(*) as total
+    FROM agendamentos
+    GROUP BY data
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json(err);
+
+    const horariosSemana = 5; // 07,09,11,14,16
+    const horariosSabado = 3; // 07,09,11
+
+    const datasLotadas = results
+      .filter((item) => {
+        const dia = new Date(item.data).getDay();
+
+        if (dia === 6) {
+          return item.total >= horariosSabado;
+        }
+
+        return item.total >= horariosSemana;
+      })
+      .map((item) => item.data.toISOString().split("T")[0]);
+
+    res.json(datasLotadas);
   });
 });
 
