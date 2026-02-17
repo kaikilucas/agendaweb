@@ -5,6 +5,11 @@ const db = require("../config/db");
 // Criar agendamento
 router.post("/", (req, res) => {
   const { nome, data, horario, descricao, usuario_id } = req.body;
+  if (!nome || !data || !horario || !descricao || !usuario_id) {
+    return res.status(400).json({
+      message: "Todos os campos são obrigatórios",
+    });
+  }
 
   const verificarSql = `
   SELECT * FROM agendamentos

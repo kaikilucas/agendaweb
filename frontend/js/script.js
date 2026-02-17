@@ -103,7 +103,7 @@ async function listarAgendamentos() {
         </button>
 
         <button onclick="excluirAgendamento(${a.id})">
-          Excluir
+        Cancelar Agendamento
         </button>
       </li>
     `;
