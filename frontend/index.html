@@ -10,7 +10,7 @@
     />
   </head>
 
-  <body>
+  <body class="login-page">
     <!-- LOGIN -->
     <div class="container" id="login-area">
       <h1>AgendaWeb</h1>
@@ -19,6 +19,13 @@
         <input type="email" id="email" placeholder="E-mail" required />
         <input type="password" id="senha" placeholder="Senha" required />
         <button type="submit">Entrar</button>
+        <p class="info">
+          Não tem conta?
+          <a href="cadastro.html">Criar cadastro</a>
+        </p>
+        <p class="info">
+          <a href="esqueci-senha.html">Esqueci minha senha</a>
+        </p>
       </form>
 
       <p class="info">Sistema de agendamentos</p>
@@ -29,6 +36,12 @@
       <h2>Novo Agendamento</h2>
 
       <input type="text" id="nome" placeholder="Nome" />
+      <input
+        type="text"
+        id="whatsapp"
+        placeholder="Whatsapp (11) 99999-9999"
+        maxlength="15"
+      />
 
       <input type="text" id="data" placeholder="Selecione a data" readonly />
 
@@ -41,13 +54,13 @@
         <option value="SOBRANCELHA">SOBRANCELHA</option>
         <option value="VOLUME RUSSO">VOLUME RUSSO</option>
         <option value="VOLUME BRASILEIRO">VOLUME BRASILEIRO</option>
-        <option value="VOLUME BRASILEIRO">REMOÇÃO</option>
-        <option value="VOLUME BRASILEIRO">MANUTENÇÃO</option>
+        <option value="REMOÇÃO">REMOÇÃO</option>
+        <option value="MANUTENÇÃO">MANUTENÇÃO</option>
       </select>
 
       <button onclick="criarAgendamento()">Salvar</button>
       <button onclick="logout()">Sair</button>
-      <h3>Agendamentos</h3>
+      <h3>Meus Agendamentos</h3>
       <ul id="lista"></ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

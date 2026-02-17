@@ -33,12 +33,13 @@ document
 
 async function criarAgendamento() {
   const nome = document.getElementById("nome").value;
+  const whatsapp = document.getElementById("whatsapp").value.replace(/\D/g, "");
   const dataSelecionada = document.getElementById("data").value;
   const horario = document.getElementById("horario").value;
   const descricao = document.getElementById("descricao").value;
   const usuario_id = localStorage.getItem("usuarioId");
 
-  if (!nome || !dataSelecionada || !horario || !descricao) {
+  if (!nome || !whatsapp || !dataSelecionada || !horario || !descricao) {
     alert("Preencha todos os campos.");
     return;
   }
@@ -49,6 +50,7 @@ async function criarAgendamento() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         nome,
+        whatsapp,
         data: dataSelecionada,
         horario,
         descricao,
@@ -90,15 +92,21 @@ async function listarAgendamentos() {
   dados.forEach((a) => {
     const partes = a.data.split("T")[0].split("-");
     const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+    const diaSemana = obterDiaSemana(a.data.split("T")[0]);
 
     lista.innerHTML += `
       <li>
         <strong>Nome:</strong> ${a.nome}<br>
-        <strong>Data:</strong> ${dataFormatada}<br>
-        <strong>Horário:</strong> ${a.horario.substring(0, 5)}<br>
-        <strong>Descrição:</strong> ${a.descricao}<br><br>
+      <strong>WhatsApp:</strong> 
+<a href="https://wa.me/55${a.whatsapp}" target="_blank">
+  ${formatarWhatsApp(a.whatsapp)}
+</a><br>
+        <strong>Data:</strong> ${dataFormatada} - ${diaSemana}<br>
 
-        <button onclick='editarAgendamento(${a.id}, "${a.nome}", "${a.data}", "${a.horario}", "${a.descricao}")'>
+        <strong>Horário:</strong> ${a.horario.substring(0, 5)}<br>
+        <strong>Serviço:</strong> ${a.descricao}<br><br>
+
+        <button onclick='editarAgendamento(${a.id}, "${a.nome}", "${a.whatsapp}", "${a.data}", "${a.horario}", "${a.descricao}")'>
           Editar
         </button>
 
@@ -110,38 +118,42 @@ async function listarAgendamentos() {
   });
 }
 
-function excluirAgendamento(id) {
-  fetch(`http://localhost:3000/api/agendamentos/${id}`, {
+async function excluirAgendamento(id) {
+  const confirmar = confirm("Tem certeza que deseja excluir este agendamento?");
+
+  if (!confirmar) return;
+
+  await fetch(`http://localhost:3000/api/agendamentos/${id}`, {
     method: "DELETE",
-  })
-    .then((res) => res.json())
-    .then(() => {
-      alert("Agendamento excluído!");
+  });
 
-      listarAgendamentos();
+  alert("Agendamento excluído!");
 
-      // 🔥 Atualiza calendário
-      atualizarDatasLotadas();
+  await listarAgendamentos();
+  await atualizarDatasLotadas();
 
-      // 🔥 Atualiza horários da data atual (se houver uma selecionada)
-      const dataSelecionada = document.getElementById("data").value;
-      if (dataSelecionada) {
-        carregarHorarios(dataSelecionada);
-      }
-    });
+  const dataSelecionada = document.getElementById("data").value;
+  if (dataSelecionada) {
+    await carregarHorarios(dataSelecionada);
+  }
 }
 
-function editarAgendamento(id, nome, data, horario, descricao) {
+function editarAgendamento(id, nome, whatsapp, data, horario, descricao) {
+  const confirmar = confirm("Tem certeza que deseja editar o agendamento?");
+
+  if (!confirmar) return;
   const novoNome = prompt("Novo nome:", nome);
+  const novoWhatsapp = prompt("Novo whatsapp:", whatsapp);
   const novaData = prompt("Nova data (AAAA-MM-DD):", data.split("T")[0]);
   const novoHorario = prompt("Novo horário:", horario);
-  const novaDescricao = prompt("Nova descrição:", descricao);
+  const novaDescricao = prompt("Novo serviço:", descricao);
 
   fetch(`http://localhost:3000/api/agendamentos/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       nome: novoNome,
+      whatsapp: novoWhatsapp,
       data: novaData,
       horario: novoHorario,
       descricao: novaDescricao,
@@ -152,16 +164,12 @@ function editarAgendamento(id, nome, data, horario, descricao) {
       alert("Agendamento atualizado!");
       listarAgendamentos();
     });
-  function logout() {
-    localStorage.removeItem("usuarioId");
-
-    document.getElementById("agendamento-area").style.display = "none";
-    document.getElementById("login-area").style.display = "block";
-
-    alert("Você saiu do sistema.");
-  }
 }
 function logout() {
+  const confirmar = confirm("Tem certeza que deseja sair?");
+
+  if (!confirmar) return;
+
   localStorage.removeItem("usuarioId");
 
   document.getElementById("agendamento-area").style.display = "none";
@@ -280,4 +288,51 @@ async function carregarDatasLotadas() {
       carregarHorarios(dateStr);
     },
   });
+}
+document.getElementById("whatsapp").addEventListener("input", function (e) {
+  let valor = e.target.value;
+
+  // Remove tudo que não for número
+  valor = valor.replace(/\D/g, "");
+
+  // Limita a 11 números
+  valor = valor.substring(0, 11);
+
+  // Aplica a máscara
+  if (valor.length > 6) {
+    valor = valor.replace(/^(\d{2})(\d{5})(\d{0,4})$/, "($1) $2-$3");
+  } else if (valor.length > 2) {
+    valor = valor.replace(/^(\d{2})(\d{0,5})$/, "($1) $2");
+  } else if (valor.length > 0) {
+    valor = valor.replace(/^(\d*)$/, "($1");
+  }
+
+  e.target.value = valor;
+});
+
+function formatarWhatsApp(numero) {
+  if (!numero) return "";
+
+  numero = numero.replace(/\D/g, "");
+
+  if (numero.length === 11) {
+    return numero.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+  }
+
+  return numero;
+}
+function obterDiaSemana(dataString) {
+  const data = new Date(dataString + "T00:00:00");
+
+  const dias = [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado",
+  ];
+
+  return dias[data.getDay()];
 }

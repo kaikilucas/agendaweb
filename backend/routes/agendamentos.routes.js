@@ -4,8 +4,8 @@ const db = require("../config/db");
 
 // Criar agendamento
 router.post("/", (req, res) => {
-  const { nome, data, horario, descricao, usuario_id } = req.body;
-  if (!nome || !data || !horario || !descricao || !usuario_id) {
+  const { nome, whatsapp, data, horario, descricao, usuario_id } = req.body;
+  if (!nome || !whatsapp || !data || !horario || !descricao || !usuario_id) {
     return res.status(400).json({
       message: "Todos os campos são obrigatórios",
     });
@@ -27,14 +27,18 @@ router.post("/", (req, res) => {
 
     // Se não existir, insere
     const sql = `
-    INSERT INTO agendamentos (nome, data, horario, descricao, usuario_id)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO agendamentos (nome, whatsapp, data, horario, descricao, usuario_id)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-    db.query(sql, [nome, data, horario, descricao, usuario_id], (err) => {
-      if (err) return res.status(500).json(err);
-      return res.json({ message: "Agendamento criado com sucesso!" });
-    });
+    db.query(
+      sql,
+      [nome, whatsapp, data, horario, descricao, usuario_id],
+      (err) => {
+        if (err) return res.status(500).json(err);
+        return res.json({ message: "Agendamento criado com sucesso!" });
+      },
+    );
   });
 });
 // Buscar horários ocupados por data
@@ -79,15 +83,15 @@ router.delete("/:id", (req, res) => {
 // Editar agendamento
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { nome, data, horario, descricao } = req.body;
+  const { nome, whatsapp, data, horario, descricao } = req.body;
 
   const sql = `
     UPDATE agendamentos 
-    SET nome = ?, data = ?, horario = ?, descricao = ?
+    SET nome = ?, whatsapp = ?, data = ?, horario = ?, descricao = ?
     WHERE id = ?
   `;
 
-  db.query(sql, [nome, data, horario, descricao, id], (err) => {
+  db.query(sql, [nome, whatsapp, data, horario, descricao, id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Agendamento atualizado com sucesso" });
   });
