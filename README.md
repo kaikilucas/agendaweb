@@ -102,22 +102,7 @@ JavaScript
 
 Flatpickr (calendário interativo)
 
-🗂 Estrutura do Projeto
-agendaweb/
-│
-├── backend/
-│   ├── routes/
-│   ├── database/
-│   └── server.js
-│
-├── frontend/
-│   ├── index.html
-│   ├── admin.html
-│   ├── script.js
-│   ├── admin.js
-│   └── admin.css
-│
-└── README.md
+
 🔐 Controle de Acesso
 
 O sistema diferencia os usuários através do campo tipo no banco de dados:
