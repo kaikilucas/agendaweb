@@ -2,6 +2,53 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 
+router.put("/cancelar/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    UPDATE agendamentos 
+    SET status = 'cancelado'
+    WHERE id = ?
+  `;
+
+  db.query(sql, [id], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Agendamento cancelado!" });
+  });
+});
+
+router.get("/admin/agendamentos", (req, res) => {
+  const sql = `
+    SELECT ag.*, u.nome, u.sobrenome, u.email
+    FROM agendamentos ag
+    JOIN usuarios u ON ag.usuario_id = u.id
+    ORDER BY ag.data ASC
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.status(500).json({ erro: err });
+    }
+
+    res.json(result);
+  });
+});
+
+router.put("/confirmar/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    UPDATE agendamentos 
+    SET status = 'confirmado'
+    WHERE id = ?
+  `;
+
+  db.query(sql, [id], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Agendamento confirmado!" });
+  });
+});
+
 // Criar agendamento
 router.post("/", (req, res) => {
   const { nome, whatsapp, data, horario, descricao, usuario_id } = req.body;

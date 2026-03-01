@@ -31,6 +31,7 @@ router.post("/login", (req, res) => {
         id: user.id,
         nome: user.nome,
         email: user.email,
+        tipo: user.tipo,
       },
     });
   });

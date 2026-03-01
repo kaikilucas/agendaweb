@@ -21,6 +21,11 @@ document
         return;
       }
 
+      // 🔥 REDIRECIONAMENTO
+      if (data.usuario.tipo === "admin") {
+        window.location.href = "admin.html";
+      }
+
       document.getElementById("login-area").style.display = "none";
       document.getElementById("agendamento-area").style.display = "block";
       localStorage.setItem("usuarioId", data.usuario.id);

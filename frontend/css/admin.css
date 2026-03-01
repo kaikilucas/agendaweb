@@ -1,0 +1,147 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  padding: 40px;
+}
+
+/* Título */
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Container da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Cabeçalho */
+thead {
+  background: #1e293b;
+  color: white;
+}
+
+thead th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Linhas */
+tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: 0.2s;
+}
+
+tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Células */
+td {
+  padding: 14px;
+  color: #555;
+}
+
+/* Link do WhatsApp */
+td a {
+  color: #25d366;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+td a:hover {
+  text-decoration: underline;
+}
+
+/* Botão excluir (se tiver) */
+.btn-excluir {
+  background: #ef4444;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-excluir:hover {
+  background: #dc2626;
+}
+
+.status-confirmado {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.status-pendente {
+  color: #f59e0b;
+  font-weight: bold;
+}
+
+.btn-confirmar {
+  background: #16a34a;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-confirmar:hover {
+  background: #15803d;
+}
+
+.status-cancelado {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.btn-cancelar {
+  background: #dc2626;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-left: 5px;
+}
+
+.btn-cancelar:hover {
+  background: #b91c1c;
+}
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.btn-sair {
+  background: #334155;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-sair:hover {
+  background: #1e293b;
+}
