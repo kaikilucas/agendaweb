@@ -1,33 +1,139 @@
-# AgendaWeb
+📘 AGENDAWEB
 
-Sistema web de agendamentos desenvolvido para a disciplina de Projeto de Software.
+Sistema web de agendamentos desenvolvido como projeto da disciplina Software Product: Analysis, Specification, Project & Implementation da Faculdade Impacta.
 
-## Objetivo
+📌 Sobre o Projeto
 
-Desenvolver um sistema web simples para controle de usuários e agendamentos.
+O AgendaWeb é uma aplicação web que permite o gerenciamento completo de agendamentos online.
 
-## Tecnologias Utilizadas
+O sistema possui dois perfis de acesso:
 
-- HTML, CSS e JavaScript puro
-- Node.js com Express
-- MySQL
+👤 Usuário comum
 
-## Arquitetura
+👨‍💼 Administrador
 
-O projeto utiliza arquitetura em três camadas:
+A plataforma possibilita criação, edição, cancelamento e controle de horários disponíveis, além de um painel administrativo para gerenciamento geral.
 
-- Frontend
-- Backend (API REST)
-- Banco de dados relacional
+🚀 Funcionalidades
+👤 Área do Usuário
 
-## Funcionalidades Implementadas
+✅ Cadastro e login
 
-- Login de usuário com integração entre frontend, backend e banco de dados
+✅ Criação de agendamento
 
-## Planejamento
+✅ Edição de agendamento
 
-O projeto utiliza um board Kanban no GitHub para organização das funcionalidades.
+✅ Cancelamento de agendamento
 
-## Autor
+✅ Listagem de agendamentos do próprio usuário
 
-- Kaiki Lucas
+✅ Visualização de data formatada (dd/mm/aaaa)
+
+✅ Visualização do dia da semana
+
+✅ Integração com link direto para WhatsApp
+
+✅ Bloqueio automático de horários já ocupados
+
+✅ Bloqueio automático de datas lotadas
+
+✅ Calendário interativo com Flatpickr
+
+✅ Logout do sistema
+
+👨‍💼 Painel Administrativo
+
+✅ Login exclusivo para administrador
+
+✅ Listagem completa de todos os agendamentos
+
+✅ Exibição de:
+
+Nome
+
+Sobrenome
+
+Email
+
+WhatsApp
+
+Data
+
+Horário
+
+Serviço
+
+Status
+
+✅ Botão de confirmar agendamento
+
+✅ Botão de cancelar agendamento
+
+✅ Atualização dinâmica da tabela
+
+✅ Controle de status:
+
+🟡 Pendente
+
+🟢 Confirmado
+
+🔴 Cancelado
+
+✅ Link direto para WhatsApp do cliente
+
+✅ Interface estilizada com CSS moderno
+
+🛠 Tecnologias Utilizadas
+Backend
+
+Node.js
+
+Express
+
+MySQL
+
+Frontend
+
+HTML5
+
+CSS3
+
+JavaScript
+
+Flatpickr (calendário interativo)
+
+🗂 Estrutura do Projeto
+agendaweb/
+│
+├── backend/
+│   ├── routes/
+│   ├── database/
+│   └── server.js
+│
+├── frontend/
+│   ├── index.html
+│   ├── admin.html
+│   ├── script.js
+│   ├── admin.js
+│   └── admin.css
+│
+└── README.md
+🔐 Controle de Acesso
+
+O sistema diferencia os usuários através do campo tipo no banco de dados:
+
+"admin" → acesso ao painel administrativo
+
+"usuario" → acesso à área de agendamentos
+
+📊 Regras de Negócio
+
+Não é permitido agendar aos domingos e segundas-feiras
+
+Horários disponíveis variam conforme o dia da semana
+
+Não é possível agendar horário já ocupado
+
+Datas são bloqueadas automaticamente quando atingem limite
+
+Apenas administrador pode alterar status de agendamento
